@@ -66,8 +66,8 @@ class ManagerSpec
 
     // connect the router
     manager ! Connect(client = testActor, url = s"ws://test/ws")
-    expectMsg(Event(1, 2, Dict.apply(), Some(Payload(
-      Map("arg0"->"paolo", "age" -> 40, "arg2" -> true).toList
+    expectMsg(Event(1, 2, Dict.apply(), Some(new Payload(
+      argumentsKw = Map("arg0"->"paolo", "age" -> 40, "arg2" -> true)
     ))))
     expectMsg(Event(3, 4, Dict.apply(), None))
   }

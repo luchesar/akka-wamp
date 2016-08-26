@@ -25,8 +25,13 @@ class JsonSerialization extends Serialization {
     def asUri = any.asInstanceOf[Uri]
 
     def asSomePayload = any match {
-      case map: Map[_, _] => Some(Payload(map.toList))
-      case list: List[_] => Some(Payload(list))  
+      case map: Map[String, _] => Some(new Payload(argumentsKw = map))
+      case list: List[_] => Some(new Payload(arguments = list))
+    }
+
+    def asPayload = any match {
+      case map: Map[String, _] => new Payload(argumentsKw = map)
+      case list: List[_] => new Payload(arguments = list)
     }
     
     def asId = any match {
@@ -108,7 +113,7 @@ class JsonSerialization extends Serialization {
           arr.length match {
             case 4 => Event(subscriptionId = arr(1).asId, publicationId = arr(2).asId, details = arr(3).asDict)
             case 5 => Event(subscriptionId = arr(1).asId, publicationId = arr(2).asId, details = arr(3).asDict, arr(4).asSomePayload)
-            case 6 => Event(subscriptionId = arr(1).asId, publicationId = arr(2).asId, details = arr(3).asDict, arr(5).asSomePayload)
+            case 6 => Event(subscriptionId = arr(1).asId, publicationId = arr(2).asId, details = arr(3).asDict, Some(arr(4).asPayload ++ arr(5).asPayload))
           }
         }
       }

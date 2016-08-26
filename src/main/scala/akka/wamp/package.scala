@@ -103,7 +103,7 @@ package object wamp {
   }
 
 
-  case class Payload(val arguments: List[Any]) {
+  case class Payload(arguments: List[Any] = List.empty, argumentsKw: Map[String, Any] = Map.empty) {
     private[wamp] def elems = {
       if (arguments.exists(_.isInstanceOf[Tuple2[_, _]])) {
         List(Nil, toMap)
@@ -119,10 +119,12 @@ package object wamp {
         case (arg, idx) => (s"arg$idx" -> arg)
       }.toMap
     }
+
+    def ++(payload: Payload) = Payload(this.arguments ++ payload.arguments, this.argumentsKw ++ payload.argumentsKw)
   }
 
   object Payload {
-    def apply(arguments: Any*): Payload = new Payload(arguments.toList)
+    def apply(arguments: Any*): Payload = new Payload(arguments = arguments.toList)
   }
 
   

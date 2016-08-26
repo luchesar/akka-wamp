@@ -164,7 +164,8 @@ class JsonSerializationSpec extends WordSpec
             m.requestId mustBe 1
             m.details mustBe empty
             m.error mustBe "wamp.error.no_such_subscription"
-            m.payload.value.arguments mustBe List("arg0"->"paolo", "age"->40, "arg2"->true)
+            m.payload.value.arguments mustBe empty
+            m.payload.value.argumentsKw mustBe Map("arg0"->"paolo", "age"->40, "arg2"->true)
           case _ => fail
         }
       }
@@ -206,6 +207,7 @@ class JsonSerializationSpec extends WordSpec
             m.options mustBe empty
             m.topic mustBe "myapp.topic1"
             m.payload.value.arguments mustBe List("paolo", 40, true)
+            m.payload.value.argumentsKw mustBe empty
           case _ => fail
         }
       }
@@ -215,7 +217,8 @@ class JsonSerializationSpec extends WordSpec
             m.requestId mustBe 9007199254740991L
             m.options mustBe empty
             m.topic mustBe "myapp.topic1"
-            m.payload.value.arguments mustBe List("arg0"->"paolo", "age"->40, "arg2"->true)
+            m.payload.value.arguments mustBe empty
+            m.payload.value.argumentsKw mustBe Map("arg0"->"paolo", "age"->40, "arg2"->true)
           case _ => fail
         }
       }
@@ -420,6 +423,7 @@ class JsonSerializationSpec extends WordSpec
             m.publicationId mustBe 2
             m.details mustBe empty
             m.payload.value.arguments mustBe List("paolo", 40, true)
+            m.payload.value.argumentsKw mustBe empty
           case _ => fail
         }
       }
@@ -430,7 +434,27 @@ class JsonSerializationSpec extends WordSpec
             m.subscriptionId mustBe 1
             m.publicationId mustBe 2
             m.details mustBe empty
-            m.payload.value.arguments mustBe List("arg0"->"paolo", "age"->40, "arg2"->true)
+            m.payload.value.arguments mustBe empty
+            m.payload.value.argumentsKw mustBe Map("arg0"->"paolo", "age"->40, "arg2"->true)
+          case _ => fail
+        }
+      }
+
+      "succeed for valid EVENT with payload both as string and as map" in {
+        s.deserialize(s"""[36,1,2,{},[{"arg0":"paolo","age":40,"arg2":true}, {"arg1":"paolo","arg2":40,"arg3":true}],{"name":"paolo","age":40,"human":true}]""") match {
+          case m: Event =>
+            m.subscriptionId mustBe 1
+            m.publicationId mustBe 2
+            m.details mustBe empty
+            m.payload.value.arguments mustBe List(
+              Map("arg0"->"paolo", "age"->40, "arg2"->true),
+              Map("arg1"->"paolo", "arg2"->40, "arg3"->true)
+            )
+            m.payload.value.argumentsKw mustBe Map(
+              "name"->"paolo",
+              "age"->40,
+              "human"->true
+            )
           case _ => fail
         }
       }

@@ -4,10 +4,9 @@ organization := "com.github.angiolep"
 
 name := "akka-wamp"
 
-version := "0.4.1"
+version := "0.5.1-patch"
 
 scalaVersion := "2.11.8"
-
 
 description := "WAMP - Web Application Messaging Protocol implementation written in Scala with Akka"
 
